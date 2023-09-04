@@ -1,0 +1,26 @@
+settings:
+  density: 0.1
+  countdown: 61
+  duration: 30
+pos1:
+  x: 0
+  z: 0
+  world: world
+pos2:
+  x: 0
+  z: 0
+  world: world
+lobby:
+  x: 0
+  y: 0
+  z: 0
+  pitch: 0
+  yaw: 0
+  world: world
+spawn:
+  x: 0
+  y: 0
+  z: 0
+  pitch: 0
+  yaw: 0
+  world: world

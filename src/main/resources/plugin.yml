@@ -1,0 +1,47 @@
+name: berryhunt
+main: de.erik_kuechler.berryhunt.Plugin
+version: 0.0.1
+description: BerryHunt by Erik Küchler
+author: Erik Küchler
+api-version: 1.15
+commands:
+  berryhunt:
+    description: Main command of the BerryHunt plugin
+    usage: /berryhunt <join|leave|pos1|pos2|lobby|spawn|placebushes|removebushes|starting>
+    aliases:
+      - bh
+    subcommands:
+      join:
+        description: Join the BerryHunt game
+        usage: /berryhunt join
+      leave:
+        description: Leave the BerryHunt game
+        usage: /berryhunt leave
+      pos1:
+        description: Sets position 1 for the BerryHunt area
+        usage: /berryhunt pos1
+        permission: berryhunt.admin
+      pos2:
+        description: Sets position 2 for the BerryHunt area
+        usage: /berryhunt pos2
+        permission: berryhunt.admin
+      lobby:
+        description: Sets lobby
+        usage: /berryhunt lobby
+        permission: berryhunt.admin
+      spawn:
+        description: Sets spawn for the BerryHunt area
+        usage: /berryhunt spawn
+        permission: berryhunt.admin
+      placebushes:
+        description: Places sweetberry bushes in the designated area
+        usage: /berryhunt placebushes
+        permission: berryhunt.admin
+      removebushes:
+        description: Removes sweetberry bushes from the designated area
+        usage: /berryhunt removebushes
+        permission: berryhunt.admin
+      starting:
+        description: Activation of start state by admin
+        usage: /berryhunt starting
+        permission: berryhunt.admin
