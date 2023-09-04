@@ -1,4 +1,6 @@
 # BerryHunt
+[![Resource](https://img.shields.io/badge/SpigotMC-Resource-orange.svg)](https://www.spigotmc.org/resources/berryhunt.112469/)  
+
 BerryHunt is a new and unique minigame plugin for Minecraft. Players can collect berries and the player with the most berries wins. In a scoreboard all players can see the number of their Sweet berries and those of the others. Each player also has the opportunity to beat his own high score. But be careful: other players can steal your berries!
 
 ## Configuration
