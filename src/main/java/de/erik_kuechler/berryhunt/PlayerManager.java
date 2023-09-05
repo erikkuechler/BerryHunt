@@ -49,18 +49,22 @@ public class PlayerManager implements Listener {
     private final HashMap<String, Integer> beerenstandMap = new HashMap<>();
     private HashMap<UUID, Integer> highscores = new HashMap<>();
 
+    /**
+     * Initializes a new instance of the PlayerManager class.
+     * @param plugin The JavaPlugin instance associated with the plugin.
+     */
     public PlayerManager(JavaPlugin plugin){
         this.plugin = plugin;
 
-        // Beim Start des Plugins Highscores aus der Konfigurationsdatei laden
+        // Load highscores from the configuration file when starting the plugin
         ConfigurationSection highscoresSection = plugin.getConfig().getConfigurationSection("highscores");
 
-        // Wenn der Abschnitt highscores noch nicht existiert, lege ihn an
+        // If the highscores section does not yet exist, create it
         if (highscoresSection == null) {
             highscoresSection = plugin.getConfig().createSection("highscores");
             plugin.saveConfig();
         }
-        // Lade die Highscores aus der Konfigurationsdatei
+        // Load the highscores from the configuration file
         if (highscoresSection != null) {
             for (String uuid : highscoresSection.getKeys(false)) {
                 highscores.put(UUID.fromString(uuid), highscoresSection.getInt(uuid));
@@ -68,19 +72,31 @@ public class PlayerManager implements Listener {
         }
     }
 
+    /**
+     * Retrieves the list of players who have joined the game.
+     * @return List of joined players.
+     */
     public List<Player> getJoinedPlayers() {
         return joinedPlayers;
     }
 
+    /**
+     * Retrieves the map that stores each player's berry count.
+     * @return Map of player names to berry counts.
+     */
     public HashMap<String, Integer> getBeerenstandMap() {
         return beerenstandMap;
     }
 
+    /**
+     * Increases a player's berry count and updates the highscore if necessary.
+     * @param player The player whose berry count should be incremented.
+     */
     public void incrementPlayerBeerenstand(Player player) {
         int currentBeerenstand = beerenstandMap.getOrDefault(player.getName(), 0);
         beerenstandMap.put(player.getName(), currentBeerenstand + 1);
 
-        // Highscores aktualisieren, falls Spieler einen neuen Highscore erreicht hat
+        // Update highscores if player has reached a new highscore
         int currentHighscore = highscores.getOrDefault(player.getUniqueId(), 0);
         if (currentBeerenstand + 1 > currentHighscore) {
             highscores.put(player.getUniqueId(), currentBeerenstand + 1);
@@ -90,12 +106,18 @@ public class PlayerManager implements Listener {
         }
     }
 
+    /**
+     * Resets the berry count for all players.
+     */
     public void resetBeerenstand() {
         for (Player player : joinedPlayers) {
             beerenstandMap.put(player.getName(), 0);
         }
     }
 
+    /**
+     * Teleports all joined players to the game's spawn coordinate.
+     */
     public void teleportAllToSpawn() {
         int x = plugin.getConfig().getInt("spawn.x");
         int y = plugin.getConfig().getInt("spawn.y");
@@ -112,13 +134,17 @@ public class PlayerManager implements Listener {
         }
     }
 
+    /**
+     * Adds a player to the game, initializes the player's score, and teleports the player if not already in the game.
+     * @param player The player to add.
+     */
     public void addPlayer(Player player) {
-        // Nix tun, wenn Spieler schon im Spiel
+        // Do nothing when player already in game
         if (joinedPlayers.contains(player)) {
             return;
         }
 
-        // STARTING wenn NOCH nix los
+        // STARTING when nothing is going on yet
         if (gameManager.gameState == GameState.EMPTY) {
             gameManager.setGameState(GameState.STARTING);
         }
@@ -140,11 +166,15 @@ public class PlayerManager implements Listener {
         player.teleport(location);
     }
 
+    /**
+     * Removes a player from the game, cleans the player data and performs a teleport.
+     * @param player The player to remove.
+     */
     public void removePlayer(Player player) {
         joinedPlayers.remove(player);
         beerenstandMap.remove(player.getName());
 
-        // Scoreboard entfernen
+        // Remove scoreboard
         Scoreboard del_scoreboard = player.getScoreboard();
         if (del_scoreboard != null) {
             Objective objective = del_scoreboard.getObjective(DisplaySlot.SIDEBAR);
@@ -167,6 +197,11 @@ public class PlayerManager implements Listener {
         player.teleport(location);
     }
 
+    /**
+     * Handles player interactions with the environment.
+     * Registers click on sweet berry bushes and prevents block destruction during the game.
+     * @param event The PlayerInteractEvent.
+     */
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (event.getClickedBlock() == null) {
@@ -177,22 +212,26 @@ public class PlayerManager implements Listener {
             if (clickedBlock.getType() == Material.SWEET_BERRY_BUSH) {
                 Ageable sweetBerryBush = (Ageable) clickedBlock.getState().getBlockData();
                 if (sweetBerryBush.getAge() == 2 || sweetBerryBush.getAge() == 3) {
-                    event.setCancelled(true); // Aktion abbrechen
+                    event.setCancelled(true); // Cancel action
                     sweetBerryBush.setAge(1);
                     clickedBlock.setBlockData(sweetBerryBush);
                     // Beerenstand +1
                     Player player = event.getPlayer();
                     incrementPlayerBeerenstand(player);
                 } else {
-                    event.setCancelled(true); // Aktion abbrechen
+                    event.setCancelled(true); // Cancel action
                 }
             } else {
-                event.setCancelled(true); // Aktion abbrechen
+                event.setCancelled(true); // Cancel action
             }
         }        
     }
 
-    // EventHandler für Diebstahl 1
+    /**
+     * Handles player interactions with other players.
+     * Registers theft of sweet berries.
+     * @param event The PlayerInteractEntityEvent.
+     */
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         if (event.getRightClicked() instanceof Player && event.getPlayer() instanceof Player) {
@@ -206,7 +245,11 @@ public class PlayerManager implements Listener {
         }
     }
 
-    // EventHandler für Diebstahl 2
+    /**
+     * Handles player damage to other players.
+     * Registers theft of sweet berries.
+     * @param event The EntityDamageByEntityEvent.
+     */
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
@@ -218,6 +261,11 @@ public class PlayerManager implements Listener {
         }
     }
     
+    /**
+     * Handles the event when a player quits the game.
+     * Cleans the player data.
+     * @param event The PlayerQuitEvent.
+     */
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
@@ -227,16 +275,24 @@ public class PlayerManager implements Listener {
         }
     }
 
-    // EventHandler, um Hungerverlust zu verhindern
+    /**
+     * This method is called when a player's food level changes.
+     * Prevents players from losing hunger.
+     * @param event The FoodLevelChangeEvent.
+     */
     @EventHandler
     public void onFoodLevelChange(FoodLevelChangeEvent event) {
-        // Prüfen, ob der betroffene Entity ein Spieler ist und ob er in joinedPlayers steht
+        // Check if the affected entity is a player and if it is in joinedPlayers
         if (event.getEntity() instanceof Player && joinedPlayers.contains(event.getEntity())) {
-            // Hungerverlust verhindern
+            // Prevent hunger loss
             event.setCancelled(true);
         }
     }
 
+    /**
+     * Displays the scoreboard to all joined players.
+     * @param duration The game duration to display on the scoreboard.
+     */
     public void showScoreboardToPlayers(int duration) {
         if (joinedPlayers.isEmpty()) {
             return;
@@ -247,7 +303,7 @@ public class PlayerManager implements Listener {
             obj.setDisplayName(ChatColor.GOLD + "" + ChatColor.BOLD + "BerryHunt");
             obj.setDisplaySlot(DisplaySlot.SIDEBAR);
     
-            // Spielerliste sortieren
+            // Sort player list
             List<Entry<String, Integer>> sortedEntries = new ArrayList<>(beerenstandMap.entrySet());
             sortedEntries.sort(new Comparator<Entry<String, Integer>>() {
                 @Override
@@ -273,7 +329,7 @@ public class PlayerManager implements Listener {
             }
             
     
-            obj.getScore("").setScore(0); // leere Zeile
+            obj.getScore("").setScore(0); // empty line
 
             String durationText = ChatColor.RED.toString() + ChatColor.BOLD.toString() + duration;
             if (gameManager.gameState == GameState.STARTING) {
@@ -286,6 +342,9 @@ public class PlayerManager implements Listener {
         }
     }
 
+    /**
+     * Displays each player's highscore.
+     */
     public void showHighscore() {
         for (Player player : joinedPlayers) {
             int currentHighscore = highscores.getOrDefault(player.getUniqueId(), 0);
@@ -293,7 +352,9 @@ public class PlayerManager implements Listener {
         }
     }
 
-    // Beim Beenden des Plugins Highscores in Konfigurationsdatei schreiben
+    /**
+     * Saves highscores to the plugin's configuration file.
+     */
     public void saveHighscores() {
         ConfigurationSection highscoresSection = plugin.getConfig().createSection("highscores");
         for (Map.Entry<UUID, Integer> entry : highscores.entrySet()) {
@@ -302,8 +363,11 @@ public class PlayerManager implements Listener {
         plugin.saveConfig();
     }
     
+    /**
+     * Evaluates the game results, announces placements, and spawns fireworks.
+     */
     public void evaluation(){
-        // Spielerliste sortieren
+        // Sort player list
         List < Entry < String, Integer >> sortedEntries = new ArrayList < > (beerenstandMap.entrySet());
         sortedEntries.sort(new Comparator < Entry < String, Integer >> () {
             @Override
@@ -312,7 +376,7 @@ public class PlayerManager implements Listener {
             }
         });  
         
-        // Platzierungen bestimmen
+        // Determine placements
         StringBuilder evaluationMessage = new StringBuilder();
         evaluationMessage.append("§8[§6BerryHunt§8]§f Placements:");
 
@@ -350,13 +414,19 @@ public class PlayerManager implements Listener {
             player.sendTitle(placeTitle, "Your berry count: " + beerenstand, 10, 100, 20);
         }
 
-        // Auswertung im Chat
+        // Evaluation in chat
         for (Player player : joinedPlayers) {
             player.sendMessage(evaluationMessage.toString());
         }
         Logger.getLogger("berryhunt").info(evaluationMessage.toString().replaceAll("\n", " ").replace("§8[§6BerryHunt§8]§f ", "").replaceAll("(?i)§[0-9A-FK-OR]", ""));
     }
 
+    /**
+     * Spawns a Firework entity at the specified location with custom colors.
+     * @param location The location to spawn the Firework.
+     * @param primaryColor The primary color of the Firework.
+     * @param secondaryColor The secondary color of the Firework.
+     */
     private void spawnFirework(Location location, Color primaryColor, Color secondaryColor) {
         Firework fw = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
         FireworkMeta fwm = fw.getFireworkMeta();
@@ -365,6 +435,11 @@ public class PlayerManager implements Listener {
         fw.setFireworkMeta(fwm);
     }
 
+    /**
+     * Attempts to steal a berry from a player and notifies both the thief and the victim.
+     * @param thief The player attempting to steal a berry.
+     * @param victim The player from whom the berry is being stolen.
+     */
     public void tryStealBerry(Player thief, Player victim) {
         // Check if the players are in the same game
         if (!joinedPlayers.contains(thief) || !joinedPlayers.contains(victim)) {

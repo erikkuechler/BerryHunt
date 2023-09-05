@@ -16,12 +16,27 @@ public class Commands implements CommandExecutor {
     private GameManager gameManager;
     private PlayerManager playerManager;
 
+    /**
+     * Initializes a new instance of the Commands class.
+     * @param plugin        The main JavaPlugin instance.
+     * @param gameManager   The GameManager instance.
+     * @param playerManager The PlayerManager instance.
+     */
     public Commands(JavaPlugin plugin, GameManager gameManager, PlayerManager playerManager) {
         this.plugin = plugin;
         this.gameManager = gameManager;
         this.playerManager = playerManager;
     }
 
+    /**
+     * Executes the specified command.
+     * 
+     * @param sender The CommandSender that executed the command.
+     * @param cmd    The Command instance representing the executed command.
+     * @param label  The alias of the command used.
+     * @param args   An array of arguments passed with the command.
+     * @return true if the command was handled successfully; otherwise, false.
+     */
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender instanceof Player)) {
@@ -108,6 +123,10 @@ public class Commands implements CommandExecutor {
         }
     }
 
+    /**
+     * Retrieves the Location of the first defined position (pos1).
+     * @return The Location of pos1.
+     */
     public Location getPos1() {
         int x = plugin.getConfig().getInt("pos1.x");
         int z = plugin.getConfig().getInt("pos1.z");
@@ -115,6 +134,10 @@ public class Commands implements CommandExecutor {
         return new Location(world, x, 0, z);
     }
 
+    /**
+     * Retrieves the Location of the second defined position (pos2).
+     * @return The Location of pos2.
+     */
     public Location getPos2() {
         int x = plugin.getConfig().getInt("pos2.x");
         int z = plugin.getConfig().getInt("pos2.z");

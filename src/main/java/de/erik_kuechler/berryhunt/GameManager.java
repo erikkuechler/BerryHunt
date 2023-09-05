@@ -16,10 +16,18 @@ public class GameManager {
     public int duration = 0;
     public GameState gameState = GameState.EMPTY;
 
+    /**
+     * Initializes a new instance of the GameManager class.
+     * @param plugin The main JavaPlugin instance.
+     */
     public GameManager(JavaPlugin plugin) {
         this.plugin = plugin;
     }
     
+    /**
+     * Sets the game state to the specified state.
+     * @param gameState The new GameState to set.
+     */
     public void setGameState(GameState gameState) {
         if (this.gameState == gameState) return;
 
@@ -47,7 +55,7 @@ public class GameManager {
             case ACTIVE:
                 if (this.gameStartCountdownTask != null) this.gameStartCountdownTask.cancel();
                 Logger.getLogger("berryhunt").info("The game is active.");
-                // Spiel
+                // Game
                 bushManager.placeSweetBerryBushes(density);
 
                 duration = plugin.getConfig().getInt("settings.duration");
@@ -55,7 +63,7 @@ public class GameManager {
                     @Override
                     public void run() {
                         if (duration == 0) {
-                            // Hier wird der Befehl ausgeführt
+                            // Here the command is executed
                             setGameState(GameState.WON);
                             cancel();
                             return;
@@ -65,7 +73,7 @@ public class GameManager {
                     }
                 }.runTaskTimer(plugin, 0, 20);
 
-                // Spiel Ende
+                // Game end
                 break;
             case WON:
                 Logger.getLogger("berryhunt").info("The game has ended.");
@@ -74,15 +82,15 @@ public class GameManager {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        // Beerenstand auf 0 bei allen
+                        // Set berry count to 0 for all players
                         playerManager.resetBeerenstand();
-                        // Wie geht es weiter?
+                        // What's next?
                         if (playerManager.getJoinedPlayers().isEmpty()) {
                             setGameState(GameState.EMPTY);
                         } else {
                             // tp all spawn
                             playerManager.teleportAllToSpawn();
-                            // Es geht wieder los!
+                            // It's starting again!
                             setGameState(GameState.STARTING);
                         }
                     }
@@ -91,6 +99,10 @@ public class GameManager {
         }
     }
 
+    /**
+     * Sets the PlayerManager for managing players in the game.
+     * @param playerManager
+     */
     public void setPlayerManager(PlayerManager playerManager) {
         this.playerManager = playerManager;
     }

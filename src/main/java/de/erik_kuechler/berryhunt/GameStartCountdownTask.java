@@ -12,6 +12,13 @@ public class GameStartCountdownTask extends BukkitRunnable {
     private PlayerManager playerManager;
     private int timeLeft;
 
+    /**
+     * Initializes a new instance of the GameStartCountdownTask class.
+     * 
+     * @param gameManager   The GameManager instance.
+     * @param playerManager The PlayerManager instance.
+     * @param timeLeft      The initial time left for the countdown.
+     */
     public GameStartCountdownTask(GameManager gameManager, PlayerManager playerManager, int timeLeft) {
         this.gameManager = gameManager;
         this.playerManager = playerManager;
@@ -19,6 +26,10 @@ public class GameStartCountdownTask extends BukkitRunnable {
         this.timeLeft = timeLeft;
     }
 
+    /**
+     * Executes the countdown task, which counts down to the start of the game.
+     * Displays countdown titles, sounds, and chat messages based on the remaining time.
+     */
     @Override
     public void run() {
         timeLeft--;

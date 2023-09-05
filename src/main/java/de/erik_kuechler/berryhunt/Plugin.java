@@ -11,6 +11,10 @@ public class Plugin extends JavaPlugin
   private static final Logger LOGGER=Logger.getLogger("berryhunt");
   private GameManager gameManager;
   private PlayerManager playerManager;
+
+  /**
+   * Called when the plugin is enabled.
+   */
   public void onEnable()
   {
     LOGGER.info("Good morning!");
@@ -25,12 +29,19 @@ public class Plugin extends JavaPlugin
     getCommand("berryhunt").setExecutor(new Commands(this, gameManager, playerManager));
   }
 
+  /**
+   * Called when the plugin is disabled.
+   */
   public void onDisable()
   {
     LOGGER.info("Good evening!");
     playerManager.saveHighscores();
   }
 
+  /**
+   * Gets the playerManager
+   * @return playerManager
+   */
   public PlayerManager getPlayerManager() {
       return playerManager;
   }

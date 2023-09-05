@@ -18,12 +18,21 @@ public class BerryBushManager {
     private final Location pos1;
     private final Location pos2;
 
+    /**
+     * Initializes a new BerryBushManager with the specified bounding box.
+     * @param pos1 pos1 The first corner of the bounding box.
+     * @param pos2 pos2 The second corner of the bounding box.
+     */
     public BerryBushManager(Location pos1, Location pos2) {
         this.world = pos1.getWorld();
         this.pos1 = pos1;
         this.pos2 = pos2;
     }
 
+    /**
+     * Places sweet berry bushes within the defined bounding box.
+     * @param density The density of berry bushes to place (0.0 to 1.0).
+     */
     public void placeSweetBerryBushes(double density) {
         int xMin = Math.min(pos1.getBlockX(), pos2.getBlockX());
         int xMax = Math.max(pos1.getBlockX(), pos2.getBlockX());
@@ -68,8 +77,9 @@ public class BerryBushManager {
         Logger.getLogger("berryhunt").info("There were placed " + numPlaced + " sweet berry bushes.");
     }
     
-    
-
+    /**
+     * Removes all sweet berry bushes within the defined bounding box.
+     */
     public void removeSweetBerryBushes() {
         int xMin = Math.min(pos1.getBlockX(), pos2.getBlockX());
         int xMax = Math.max(pos1.getBlockX(), pos2.getBlockX());
