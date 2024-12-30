@@ -1,6 +1,6 @@
 name: berryhunt
 main: de.erik_kuechler.berryhunt.Plugin
-version: 0.0.1
+version: 0.0.2
 description: BerryHunt by Erik Küchler
 author: Erik Küchler
 api-version: 1.15

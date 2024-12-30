@@ -356,6 +356,7 @@ public class PlayerManager implements Listener {
      * Saves highscores to the plugin's configuration file.
      */
     public void saveHighscores() {
+        plugin.reloadConfig(); // take external changes into account
         ConfigurationSection highscoresSection = plugin.getConfig().createSection("highscores");
         for (Map.Entry<UUID, Integer> entry : highscores.entrySet()) {
             highscoresSection.set(entry.getKey().toString(), entry.getValue());
